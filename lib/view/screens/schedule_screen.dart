@@ -45,7 +45,7 @@ class _DriverScheduleState extends State<DriverSchedule> {
             TextButton(
               onPressed: () {
                 Navigator.pop(context, 'OK');
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>LiveTracking(booking_id: id.toString(),)));
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>LiveTracking(booking_id: id.toString(),onClickCont: false,)));
               },
               child: const Text('OK'),
             ),
@@ -78,6 +78,8 @@ class _DriverScheduleState extends State<DriverSchedule> {
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>DriverSchedule()));
     }
   }
+
+  
 
   Future GetBookings()async{
     SharedPreferences sharedPreferences =await SharedPreferences.getInstance();
@@ -141,6 +143,7 @@ class _DriverScheduleState extends State<DriverSchedule> {
                         itemBuilder: (BuildContext context, int index) {
                           print({"SNAP : ", snapshot.data['data']});
                           return MyTile(
+                            bookingId: snapshot.data['data'][index]['id'],
                             name: snapshot.data['data'][index]['users']['name']
                                 .toString(),
                             destination: snapshot
@@ -174,9 +177,10 @@ class MyTile extends StatelessWidget {
   String ? pickUpAddress;
   String ? destination;
   String ? bookingStat;
+  int ? bookingId;
   final GestureTapCallback  onTapAccept;
   final GestureTapCallback onTapDecline;
-  MyTile({Key? key,required this.name,required this.pickUpAddress,required this.destination,required this.onTapAccept,required this.onTapDecline,required this.bookingStat}) : super(key: key);
+  MyTile({Key? key,required this.name,required this.pickUpAddress,required this.destination,required this.onTapAccept,required this.onTapDecline,required this.bookingStat,required this.bookingId}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -236,7 +240,10 @@ class MyTile extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                MyTileButton(title: 'Continue',OnTap: onTapAccept),              ],
+                MyTileButton(title: 'Continue',OnTap: (){
+                                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>LiveTracking(booking_id: bookingId.toString(),onClickCont: true,)));
+
+                }),              ],
             )
             ,
           ],

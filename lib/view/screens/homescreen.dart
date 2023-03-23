@@ -107,60 +107,62 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
           MySizedBox(),
-          Container(
-            padding: EdgeInsets.all(20),
-            height: MediaQuery.of(context).size.height - 350,
-            width: MediaQuery.of(context).size.width,
-            child: 
-            _userType == 'user'?
-            FutureBuilder(
-              future: ReadJSON(),
-              builder: (BuildContext context,AsyncSnapshot snapshot){
-                print({"Snapshot : ",snapshot.data});
-                if(!snapshot.hasData){
-                 return Center(child: CircularProgressIndicator(color: Colors.redAccent),);
-                }else {
-                  return ListView.builder(
-                      itemCount: snapshot.data["items"].length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return MyTile2(title: snapshot
-                            .data["items"][index]["name"], onTap: () {
-                          if (snapshot.data["items"][index]["id"] == "1") {
-                            Navigator.push(
-                                context, MaterialPageRoute(builder: (context) =>
-                                DriverList(Type: '1',)));
-                          }
-                          if (snapshot.data["items"][index]["id"] == "2") {
-                            Navigator.push(
-                                context, MaterialPageRoute(builder: (context) =>
-                                DriverList(Type: '2',)));
-                          }
-                          if (snapshot.data["items"][index]["id"] == "3") {
-                            Navigator.push(
-                                context, MaterialPageRoute(builder: (context) =>
-                                ShowUserBooking()));
-                          }
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.all(20),
+              // height: MediaQuery.of(context).size.height - 350,
+              // width: MediaQuery.of(context).size.width,
+              child: 
+              _userType == 'user'?
+              FutureBuilder(
+                future: ReadJSON(),
+                builder: (BuildContext context,AsyncSnapshot snapshot){
+                  print({"Snapshot : ",snapshot.data});
+                  if(!snapshot.hasData){
+                   return Center(child: CircularProgressIndicator(color: Colors.redAccent),);
+                  }else {
+                    return ListView.builder(
+                        itemCount: snapshot.data["items"].length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return MyTile2(title: snapshot
+                              .data["items"][index]["name"], onTap: () {
+                            if (snapshot.data["items"][index]["id"] == "1") {
+                              Navigator.push(
+                                  context, MaterialPageRoute(builder: (context) =>
+                                  DriverList(Type: '1',)));
+                            }
+                            if (snapshot.data["items"][index]["id"] == "2") {
+                              Navigator.push(
+                                  context, MaterialPageRoute(builder: (context) =>
+                                  DriverList(Type: '2',)));
+                            }
+                            if (snapshot.data["items"][index]["id"] == "3") {
+                              Navigator.push(
+                                  context, MaterialPageRoute(builder: (context) =>
+                                  ShowUserBooking()));
+                            }
+                          });
                         });
-                      });
-                  // return SizedBox();
-                }
-              },
-            ):
-            Column(
-              children: [
-                MyTile2(
-                  onTap: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=> DriverSchedule()));
-                  },
-                  title: "Check My Schedule",
-                ),
-                MyTile2(
-                  onTap: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=> MyEarnings()));
-                  },
-                  title: "My Earnings",
-                ),
-              ],
+                    // return SizedBox();
+                  }
+                },
+              ):
+              Column(
+                children: [
+                  MyTile2(
+                    onTap: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=> DriverSchedule()));
+                    },
+                    title: "Check My Schedule",
+                  ),
+                  MyTile2(
+                    onTap: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=> MyEarnings()));
+                    },
+                    title: "My Earnings",
+                  ),
+                ],
+              ),
             ),
           ),
         ],
