@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 
 class DriverList extends StatelessWidget {
   String Type;
+
    DriverList({Key? key,required this.Type}) : super(key: key);
 
   Future<void> GetDrivers()async{
@@ -54,6 +55,8 @@ class DriverList extends StatelessWidget {
                 print({"SNAP : ",snapshot.data[['driver_list']]});
                 // return SizedBox();
                 return MyTile(
+                  vehicle_name: snapshot.data['driver_list'][index]['vehicle_name'].toString(),
+                  phone:snapshot.data['driver_list'][index]['phone'].toString() ,
                   name: snapshot.data['driver_list'][index]['name'].toString(),
                   gender: snapshot.data['driver_list'][index]['gender'].toString(),
                   licence: snapshot.data['driver_list'][index]['licence_no'].toString(),
@@ -95,22 +98,25 @@ class DriverList extends StatelessWidget {
 class MyTile extends StatelessWidget {
   String ? name;
   String ? gender;
+  String? vehicle_name;
+  String? phone;
   String ? licence;
   String ? imgPath;
   String ? icu;
   final GestureTapCallback onTap;
-   MyTile({Key? key,required this.name,required this.gender,required this.licence,required this.imgPath,required this.icu,required this.onTap}) : super(key: key);
+   MyTile({Key? key,required this.phone,required this.vehicle_name,required this.name,required this.gender,required this.licence,required this.imgPath,required this.icu,required this.onTap}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
       child: Container(
         margin: EdgeInsets.all(20),
-        height: 170,
+       // height: 170,
         width: MediaQuery.of(context).size.width,
 
         decoration: BoxDecoration(
           color: Colors.grey.shade200,
+
           borderRadius: BorderRadius.all(Radius.circular(16)),
           border: Border.all(width: 1,color: Colors.redAccent)
         ),
@@ -126,6 +132,20 @@ class MyTile extends StatelessWidget {
                     children: [
                       Text("Name :   ",style: TextStyle(fontWeight: FontWeight.w600,fontSize: 16),),
                       Text(name!,style: TextStyle(fontWeight: FontWeight.w400,fontSize: 16),),
+                    ],
+                  ),
+                  SizedBox(height: 10,),
+                  Row(
+                    children: [
+                      Text("Phone :   ",style: TextStyle(fontWeight: FontWeight.w600,fontSize: 16),),
+                      Text(phone!,style: TextStyle(fontWeight: FontWeight.w400,fontSize: 16),),
+                    ],
+                  ),
+                  SizedBox(height: 10,),
+                  Row(
+                    children: [
+                      Text("Vehicle name :   ",style: TextStyle(fontWeight: FontWeight.w600,fontSize: 16),),
+                      Text(vehicle_name!,style: TextStyle(fontWeight: FontWeight.w400,fontSize: 16),),
                     ],
                   ),
                   SizedBox(height: 10,),

@@ -203,7 +203,8 @@ class _ShowUserBookingState extends State<ShowUserBooking> {
                               //   }
                             },
                             time: snapshot.data["data"][index]['booking_later']
-                                .toString(),
+                                .toString(), driver: snapshot.data["data"][index]['driver_id']
+                              .toString(),
                           );
                         });
                   }
@@ -217,26 +218,91 @@ class _ShowUserBookingState extends State<ShowUserBooking> {
   }
 }
 
-class MyTile extends StatelessWidget {
+class MyTile extends StatefulWidget {
   String? pickUpAddress;
   String? time;
   String? destination;
   String? status;
   String? rideStues;
+  String? driver;
   final GestureTapCallback onTap;
   MyTile(
       {Key? key,
       required this.pickUpAddress,
+        required this.driver,
       required this.destination,
       required this.time,
       required this.status,
       required this.rideStues,
       required this.onTap})
       : super(key: key);
+
+  @override
+  State<MyTile> createState() => _MyTileState();
+}
+
+class _MyTileState extends State<MyTile> {
+
+
+
+  String? driverName ="Not avilable";
+  String? driverPhone ="Not avilable";
+  String? vehicle_name ="Not avilable";
+
+  Future<void> GetProfile()async{
+    SharedPreferences sharedPreferences =await SharedPreferences.getInstance();
+    String? sub_status = sharedPreferences.getString('accountStat');
+    String? userID = sharedPreferences.getString('userId');
+    String? token = sharedPreferences.getString('token');
+    var map = new Map<String,dynamic>();
+    // if(sub_status == 'user'){
+    //   map['user_id'] = userID.toString();
+    // } else{
+    //
+    // }
+    map['driver_id'] = widget.driver.toString();
+    print(map);
+    final response = await http.post(
+      Uri.parse(
+
+        "https://jeevana.projectsvn.com/api/driver-get-profile"
+        ,
+      ),
+      headers: {
+        'Accept':'application/json',
+        'Authorization':'Bearer '+token.toString()
+      },
+      body: map,
+    );
+    print({"profile map : ",map});
+    print(response.body);
+
+
+
+    var detials =  jsonDecode(response.body);
+    print(detials["profile"]["name"].toString());
+    setState(() {
+      driverName= detials["profile"]["name"].toString();
+      driverPhone= detials["profile"]["phone"].toString();
+      vehicle_name= detials["profile"]["vehicle_name"].toString();
+    });
+
+    // print({"Gett Profile :",jsondata['profile']['name'].toString()});
+
+
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    GetProfile();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: onTap,
+      onTap: widget.onTap,
       child: Container(
         margin: EdgeInsets.only(bottom: 20),
         // height: 120,
@@ -257,12 +323,63 @@ class MyTile extends StatelessWidget {
                       Row(
                         children: [
                           Text(
+                            "Driver :   ",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w600, fontSize: 16),
+                          ),
+                          Text(
+                            driverName!,
+                            style: TextStyle(
+                                fontWeight: FontWeight.w400, fontSize: 16),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        children: [
+                          Text(
+                            "phone :   ",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w600, fontSize: 16),
+                          ),
+                          Text(
+                            driverPhone!,
+                            style: TextStyle(
+                                fontWeight: FontWeight.w400, fontSize: 16),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        children: [
+                          Text(
+                            "Vehicle name :   ",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w600, fontSize: 16),
+                          ),
+                          Text(
+                            vehicle_name!,
+                            style: TextStyle(
+                                fontWeight: FontWeight.w400, fontSize: 16),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        children: [
+                          Text(
                             "Address :   ",
                             style: TextStyle(
                                 fontWeight: FontWeight.w600, fontSize: 16),
                           ),
                           Text(
-                            pickUpAddress!,
+                            widget.pickUpAddress!,
                             style: TextStyle(
                                 fontWeight: FontWeight.w400, fontSize: 16),
                           ),
@@ -279,7 +396,7 @@ class MyTile extends StatelessWidget {
                                 fontWeight: FontWeight.w600, fontSize: 16),
                           ),
                           Text(
-                            destination!,
+                            widget.destination!,
                             style: TextStyle(
                                 fontWeight: FontWeight.w400, fontSize: 16),
                           ),
@@ -296,7 +413,7 @@ class MyTile extends StatelessWidget {
                                 fontWeight: FontWeight.w600, fontSize: 16),
                           ),
                           Text(
-                            time == 'null' ? 'NOW' : time!,
+                            widget.time == 'null' ? 'NOW' : widget.time!,
                             style: TextStyle(
                                 fontWeight: FontWeight.w400, fontSize: 16),
                           ),
@@ -312,11 +429,11 @@ class MyTile extends StatelessWidget {
                             style: TextStyle(
                                 fontWeight: FontWeight.w600, fontSize: 16),
                           ),
-                          rideStues == "0"
+                          widget.rideStues == "0"
                               ? Text(
-                                  status == "1"
+                                  widget.status == "1"
                                       ? "Pending"
-                                      : status == "2"
+                                      : widget.status == "2"
                                           ? "Driver Accepted"
                                           : "Driver Rejected"!,
                                   style: TextStyle(
